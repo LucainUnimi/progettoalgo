@@ -1,0 +1,16 @@
+mela: fiore, quadrato
+(
+    elefante: stella, fiore
+    mela: fiore, quadrato
+    cammello: quadrato, cerchio
+)
+(
+    cappello: cerchio, luna
+    cavallo: luna, stella
+    elefante: stella, fiore
+)
+(
+    elefante: stella, fiore
+    mela: fiore, quadrato
+    cammello: quadrato, cerchio
+)
