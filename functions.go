@@ -57,7 +57,7 @@ func disponiFila(g gioco, listaNomi string) {
 	}
 }
 
-func sottostringaMassima(sigma, tau string) (int, string) {
+func sottoStringaMassima(sigma, tau string) (int, string) {
 	n, m := len(sigma), len(tau)
 	// Creazione di una matrice per memorizzare i risultati dei sottoproblemi
 	dp := make([][]int, n+1)
@@ -100,8 +100,9 @@ func sottostringaMassima(sigma, tau string) (int, string) {
 func indiceCacofonia(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && (*m).fila != nil && *(*m).fila != nil {
 		var c int
-		for f := m.fila.head; f.next.next != nil; f = f.next {
-			c += sottoStringMassima(f.value.sigma, f.next.value.sigma)
+		for f := (*m.fila).head; f.next.next != nil; f = f.next {
+			x, _ := sottoStringaMassima(f.value.sigma, f.next.value.sigma)
+			c += x
 		}
 	}
 }
