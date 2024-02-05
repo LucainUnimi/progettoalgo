@@ -8,7 +8,10 @@ type mattoncino struct {
 
 type fila = *linkedList
 
-type gioco = map[string]*mattoncino
+type gioco struct {
+	mattoncini map[string]*mattoncino
+	forme      map[string][]*mattoncino
+}
 
 type linkedList struct {
 	head *node
@@ -22,8 +25,7 @@ type node struct {
 }
 
 func newGioco() *gioco {
-	m := make(map[string]*mattoncino, 100)
-	return &m
+	return &gioco{make(map[string]*mattoncino, 100), make(map[string][]*mattoncino, 100)}
 }
 
 func newFila() fila {
