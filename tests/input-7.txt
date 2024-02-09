@@ -1,0 +1,10 @@
+m cerchio quadrato cammello
+m stella fiore elefante
+m luna stella cavallo
+8
+m cerchio luna cappello
+m fiore quadrato mela
+d +elefante +mela -cammello
+S mela
+i mela
+q
