@@ -142,10 +142,12 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 	if !(isInAlpha && isInBeta) {
 		return
 	}
-	if alpha == beta {
-		fmt.Println("here there is a bug")
-		return
-	}
+	/*
+		if alpha == beta {
+			fmt.Println("here there is a bug")
+			return
+		}
+	*/
 	visited := make(map[string]string)
 	queue := list.New()
 	queue.PushBack(alpha)
@@ -175,16 +177,20 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 	fila := ""
 	key := beta
 
-	for key != alpha {
-		s := visited[key]
-		m := g.mattoncini[s]
-		if m.beta == key {
-			fila = " +" + s + fila
-			key = m.alpha
-		} else if m.alpha == key {
-			fila = " -" + s + " " + fila
-			key = m.beta
+	if visited[beta] != "" {
+		for key != alpha {
+			s := visited[key]
+			m := g.mattoncini[s]
+			if m.beta == key {
+				fila = " +" + s + fila
+				key = m.alpha
+			} else if m.alpha == key {
+				fila = " -" + s + " " + fila
+				key = m.beta
+			}
+			disponiFila(g, fila)
 		}
+	} else {
+		fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
 	}
-	disponiFila(g, fila)
 }
