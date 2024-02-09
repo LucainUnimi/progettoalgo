@@ -10,8 +10,18 @@ func inserisciMattoncino(g gioco, alpha, beta, sigma string) {
 	if _, isIn := g.mattoncini[sigma]; !isIn && alpha != beta {
 		m := newMattoncino(alpha, beta, sigma)
 		g.mattoncini[sigma] = m
-		g.forme[alpha].PushBack(m)
-		g.forme[beta].PushBack(m)
+		if _, isIn := g.forme[alpha]; isIn {
+			g.forme[alpha].PushBack(m)
+		} else {
+			g.forme[alpha] = list.New()
+			g.forme[alpha].PushBack(m)
+		}
+		if _, isIn := g.forme[beta]; isIn {
+			g.forme[beta].PushBack(m)
+		} else {
+			g.forme[beta] = list.New()
+			g.forme[beta].PushBack(m)
+		}
 	}
 }
 
@@ -107,8 +117,7 @@ func indiceCacofonia(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && (*m).fila != nil && *(*m).fila != nil {
 		var c int
 		for f := (*m.fila).Front(); f.Next() != nil; f = f.Next() {
-			m, _ = f.Value.(*mattoncino)
-			c += len(sottoStringaMassima((*m).sigma, (*m).sigma))
+			c += len(sottoStringaMassima(f.Value.(*mattoncino).sigma, f.Next().Value.(*mattoncino).sigma))
 		}
 		fmt.Printf("%d\n", c)
 	}
@@ -135,6 +144,7 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 	}
 	if alpha == beta {
 		fmt.Println("here there is a bug")
+		return
 	}
 	visited := make(map[string]string)
 	queue := list.New()
@@ -146,21 +156,22 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 		adjs := g.forme[curr].Front()
 		for ; adjs != nil; adjs = adjs.Next() {
 			m := adjs.Value.(*mattoncino)
-			if m.alpha == curr && visited[m.beta] == "" && (*m).fila != nil && *(*m).fila != nil {
+			if m.alpha == curr && visited[m.beta] == "" && ((*m).fila == nil || *(*m).fila == nil) {
 				visited[m.beta] = m.sigma
 				queue.PushBack(m.beta)
-				if curr == beta {
+				if m.beta == beta {
 					break
 				}
-			} else if m.beta == curr && visited[alpha] == "" && (*m).fila != nil && *(*m).fila != nil {
+			} else if m.beta == curr && visited[m.alpha] == "" && ((*m).fila == nil || *(*m).fila == nil) {
 				visited[m.alpha] = m.sigma
 				queue.PushBack(m.alpha)
-				if curr == beta {
+				if m.alpha == beta {
 					break
 				}
 			}
 		}
 	}
+
 	fila := ""
 	key := beta
 
@@ -168,10 +179,10 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 		s := visited[key]
 		m := g.mattoncini[s]
 		if m.beta == key {
-			fila = "+" + s + fila
+			fila = " +" + s + fila
 			key = m.alpha
 		} else if m.alpha == key {
-			fila = "-" + s + " " + fila
+			fila = " -" + s + " " + fila
 			key = m.beta
 		}
 	}
