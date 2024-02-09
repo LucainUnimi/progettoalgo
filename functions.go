@@ -188,8 +188,8 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 				fila = " -" + s + " " + fila
 				key = m.beta
 			}
-			disponiFila(g, fila)
 		}
+		disponiFila(g, fila)
 	} else {
 		fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
 	}
