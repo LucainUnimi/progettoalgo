@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"strings"
 )
@@ -117,15 +118,62 @@ func indiceCacofonia(g gioco, sigma string) {
 // puntatori inutili  QUESTIONE SU UN CONTROLLO
 func eliminaFila(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && m.fila != nil {
-		(*(*m).fila) = nil
+		*(*m).fila = nil
 	}
 }
 
 /*
-func disponiFilaMinima(g gioco, alpha, beta string) {
-	if starts, isIn := g.forme[alpha]
-		isIn {
-
-	}
-}
+Crea e posiziona sul tavolo da gioco una fila di lunghezza minima da α a β. Tutti i mattoncini
+della fila devono essere presi dalla scatola. Se non è possibile creare alcuna fila da α a β, stampa il
+messaggio: non esiste fila da α a β
 */
+func disponiFilaMinima(g gioco, alpha, beta string) {
+	_, isInAlpha := g.forme[alpha]
+	_, isInBeta := g.forme[beta]
+	if !(isInAlpha && isInBeta) {
+		return
+	}
+	if alpha == beta {
+		fmt.Println("here there is a bug")
+	}
+	visited := make(map[string]string)
+	queue := list.New()
+	queue.PushBack(alpha)
+	visited[alpha] = "Rt%JV+3*tFN3=Lvxj-SG"
+
+	for queue.Len() != 0 {
+		curr := queue.Remove(queue.Front()).(string)
+		adjs := g.forme[curr].Front()
+		for ; adjs != nil; adjs = adjs.Next() {
+			m := adjs.Value.(*mattoncino)
+			if m.alpha == curr && visited[m.beta] == "" && (*m).fila != nil && *(*m).fila != nil {
+				visited[m.beta] = m.sigma
+				queue.PushBack(m.beta)
+				if curr == beta {
+					break
+				}
+			} else if m.beta == curr && visited[alpha] == "" && (*m).fila != nil && *(*m).fila != nil {
+				visited[m.alpha] = m.sigma
+				queue.PushBack(m.alpha)
+				if curr == beta {
+					break
+				}
+			}
+		}
+	}
+	fila := ""
+	key := beta
+
+	for key != alpha {
+		s := visited[key]
+		m := g.mattoncini[s]
+		if m.beta == key {
+			fila = "+" + s + fila
+			key = m.alpha
+		} else if m.alpha == key {
+			fila = "-" + s + " " + fila
+			key = m.beta
+		}
+	}
+	disponiFila(g, fila)
+}

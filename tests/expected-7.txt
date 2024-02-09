@@ -1,4 +1,3 @@
-
 (
 elefante: stella, fiore
 mela: fiore, quadrato

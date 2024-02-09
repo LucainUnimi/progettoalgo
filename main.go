@@ -29,6 +29,12 @@ func main() {
 			eliminaFila(g, operand)
 		case "i":
 			indiceCacofonia(g, operand)
+		case "M":
+			names := strings.Split(operand, " ")
+			fmt.Println(sottoStringaMassima(names[0], names[1]))
+		case "f":
+			names := strings.Split(operand, " ")
+			disponiFilaMinima(g, names[0], names[1])
 		case "q":
 			return
 		}
