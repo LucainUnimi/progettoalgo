@@ -9,8 +9,8 @@ func inserisciMattoncino(g gioco, alpha, beta, sigma string) {
 	if _, isIn := g.mattoncini[sigma]; !isIn && alpha != beta {
 		m := newMattoncino(alpha, beta, sigma)
 		g.mattoncini[sigma] = m
-		g.forme[alpha] = append(g.forme[alpha], m)
-		g.forme[beta] = append(g.forme[beta], m)
+		g.forme[alpha].PushBack(m)
+		g.forme[beta].PushBack(m)
 	}
 }
 
@@ -27,8 +27,9 @@ func stampaMattoncino(g gioco, sigma string) {
 func stampaFila(g gioco, sigma string) {
 	if m, exist := g.mattoncini[sigma]; exist && (*m).fila != nil && (*(*m).fila) != nil {
 		fmt.Println("(")
-		for f := (*m.fila).head; f != nil; f = f.next {
-			fmt.Printf("\t%s: %s, %s\n", f.value.sigma, f.value.alpha, f.value.beta)
+		for f := (*m.fila).Front(); f != nil; f = f.Next() {
+			m1, _ := f.Value.(*mattoncino)
+			fmt.Printf("%s: %s, %s\n", m1.sigma, m1.alpha, m1.beta)
 		}
 		fmt.Println(")")
 	}
@@ -44,20 +45,20 @@ func disponiFila(g gioco, listaNomi string) {
 				m.direzione = false
 				swapLati(m)
 			}
-			if f.tail != nil && f.tail.value.beta != m.alpha {
+			if f.Len() != 0 && (*f.Back().Value.(*mattoncino)).beta != m.alpha {
 				return
 			}
-			addLast(f, m)
+			f.PushBack(m)
 		} else {
 			return
 		}
 	}
-	for p := f.head; p != nil; p = p.next {
-		p.value.fila = &f
+	for p := f.Front(); p != nil; p = p.Next() {
+		(*p.Value.(*mattoncino)).fila = &f
 	}
 }
 
-func sottoStringaMassima(sigma, tau string) (int, string) {
+func sottoStringaMassima(sigma, tau string) string {
 	n, m := len(sigma), len(tau)
 	// Creazione di una matrice per memorizzare i risultati dei sottoproblemi
 	dp := make([][]int, n+1)
@@ -94,16 +95,21 @@ func sottoStringaMassima(sigma, tau string) (int, string) {
 		}
 	}
 
-	return len(lcs), string(lcs)
+	return string(lcs)
 }
 
+/*
+   Se non esiste alcun mattoncino di nome σ oppure se il mattoncino di nome σ non appartiene ad alcuna fila, non compie alcuna operazione.
+   Altrimenti stampa l’indice di cacofonia della fila cui appartiene il mattoncino di nome σ.
+*/
 func indiceCacofonia(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && (*m).fila != nil && *(*m).fila != nil {
 		var c int
-		for f := (*m.fila).head; f.next.next != nil; f = f.next {
-			x, _ := sottoStringaMassima(f.value.sigma, f.next.value.sigma)
-			c += x
+		for f := (*m.fila).Front(); f.Next() != nil; f = f.Next() {
+			m, _ = f.Value.(*mattoncino)
+			c += len(sottoStringaMassima((*m).sigma, (*m).sigma))
 		}
+		fmt.Printf("%d\n", c)
 	}
 }
 
@@ -114,3 +120,12 @@ func eliminaFila(g gioco, sigma string) {
 		(*(*m).fila) = nil
 	}
 }
+
+/*
+func disponiFilaMinima(g gioco, alpha, beta string) {
+	if starts, isIn := g.forme[alpha]
+		isIn {
+
+	}
+}
+*/

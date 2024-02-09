@@ -16,17 +16,19 @@ func main() {
 		switch operation {
 		case "m":
 			names := strings.Split(operand, " ")
-			inserisciMattoncino(*g, names[0], names[1], names[2])
+			inserisciMattoncino(g, names[0], names[1], names[2])
 		case "s":
-			stampaMattoncino(*g, operand)
+			stampaMattoncino(g, operand)
 			fmt.Println()
 		case "d":
 			listaNomi := operand //per esempio "+ciao -cane -gatto +macchina"
-			disponiFila(*g, listaNomi)
+			disponiFila(g, listaNomi)
 		case "S":
-			stampaFila(*g, operand)
+			stampaFila(g, operand)
 		case "e":
-			eliminaFila(*g, operand)
+			eliminaFila(g, operand)
+		case "i":
+			indiceCacofonia(g, operand)
 		case "q":
 			return
 		}

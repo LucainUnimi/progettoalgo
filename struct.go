@@ -1,61 +1,34 @@
 package main
 
+import "container/list"
+
 type mattoncino struct {
 	direzione          bool
 	alpha, beta, sigma string
 	fila               *fila
 }
 
-type fila = *linkedList
+type fila = *list.List
 
-type gioco struct {
+type giocoStruct struct {
 	mattoncini map[string]*mattoncino
-	forme      map[string][]*mattoncino
+	forme      map[string]*list.List
 }
 
-type linkedList struct {
-	head *node
-	tail *node
-}
+type gioco = *giocoStruct
 
-type node struct {
-	next  *node
-	prev  *node
-	value *mattoncino
-}
-
-func newGioco() *gioco {
-	return &gioco{make(map[string]*mattoncino, 100), make(map[string][]*mattoncino, 100)}
+func newGioco() gioco {
+	return &giocoStruct{make(map[string]*mattoncino), make(map[string]*list.List)}
 }
 
 func newFila() fila {
-	return newList()
-}
-
-func newList() *linkedList {
-	return &linkedList{nil, nil}
+	return list.New()
 }
 
 func newMattoncino(alpha, beta, sigma string) *mattoncino {
 	return &mattoncino{alpha: alpha, beta: beta, sigma: sigma, direzione: true, fila: nil}
 }
 
-func newNode(m *mattoncino) *node {
-	return &node{nil, nil, m}
-}
-
 func swapLati(m *mattoncino) {
 	m.alpha, m.beta = m.beta, m.alpha
-}
-
-func addLast(l *linkedList, m *mattoncino) {
-	n := newNode(m)
-	if l.tail == nil {
-		l.head = n
-		l.tail = n
-	} else {
-		l.tail.next = n
-		n.prev = l.tail
-		l.tail = n
-	}
 }
