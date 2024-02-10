@@ -51,7 +51,7 @@ func disponiFila(g gioco, listaNomi string) {
 	f = newFila()
 	for _, s := range strings.Fields(listaNomi) {
 		sigma := s[1:]
-		if m, exist := g.mattoncini[sigma]; exist && ((*m).fila == nil || (*(*m).fila) == nil) {
+		if m, exist := g.mattoncini[sigma]; exist && ((*m).fila == nil || *((*m).fila) == nil) {
 			if !(s[0] == '+') != !m.direzione {
 				m.direzione = false
 				swapLati(m)
@@ -127,7 +127,7 @@ func indiceCacofonia(g gioco, sigma string) {
 // puntatori inutili  QUESTIONE SU UN CONTROLLO
 func eliminaFila(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && m.fila != nil {
-		*(*m).fila = nil
+		*((*m).fila) = nil
 	}
 }
 
@@ -174,21 +174,30 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 		}
 	}
 
-	fila := ""
-	key := beta
-
 	if visited[beta] != "" {
+		fila := ""
+		key := beta
 		for key != alpha {
 			s := visited[key]
 			m := g.mattoncini[s]
 			if m.beta == key {
-				fila = " +" + s + fila
+				if (*m).direzione {
+					fila = " +" + s + fila
+				} else {
+					fila = " -" + s + fila
+				}
 				key = m.alpha
-			} else if m.alpha == key {
-				fila = " -" + s + " " + fila
+			} else {
+				if (*m).direzione {
+					fila = " -" + s + fila
+				} else {
+					fila = " +" + s + fila
+
+				}
 				key = m.beta
 			}
 		}
+		
 		disponiFila(g, fila)
 	} else {
 		fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
