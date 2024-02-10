@@ -22,8 +22,8 @@ cammello: quadrato, cerchio
 )
 3
 (
-topolino: croce, sole
-tavolo: sole, croce
+tavolo: croce, sole
+topolino: sole, croce
 )
 4
 (

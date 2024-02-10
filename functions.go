@@ -246,3 +246,65 @@ func BFSCamminoMinimo(g gioco, alpha, beta string, visitedArch map[*mattoncino]b
 	}
 	return c, ""
 }
+
+func nomeFila(g gioco, sigma string) string {
+	m, isIn := g.mattoncini[sigma]
+	if !isIn || (*m).fila == nil || *(*m).fila == nil {
+		return ""
+	}
+	var name string
+	for e := (*(*m).fila).Front(); e != nil; e = e.Next() {
+		if (*m).direzione {
+			name += "+" + (*m).sigma + " "
+		} else {
+			name += "-" + (*m).sigma + " "
+		}
+	}
+	return name
+}
+
+func daFilaaListaForme(g gioco, sigma string) string {
+	m, isIn := g.mattoncini[sigma]
+	if !isIn || (*m).fila == nil || *(*m).fila == nil {
+		return ""
+	}
+	var nome string
+	for e := (*(*m).fila).Front(); e != nil; e = e.Next() {
+		if (*m).direzione {
+			nome += " " + (*m).alpha
+		} else {
+			nome += " " + (*m).beta
+		}
+	}
+	return nome
+}
+
+func costo(g gioco, sigma string, listaForme string) {
+	name := nomeFila(g, sigma)
+	if name == "" {
+		return
+	}
+
+	shapes := strings.Fields(listaForme)
+	var visited map[*mattoncino]bool
+	for i := 0; i < len(shapes)-1; i++ {
+		var found bool
+		bricks := g.forme[shapes[i]].Front()
+		for ; bricks != nil; bricks = bricks.Next() {
+			m := bricks.Value.(*mattoncino)
+			if (m.alpha == shapes[i+1] || m.beta == shapes[i+1]) && !visited[m] {
+				found = true
+				break
+			}
+		}
+		if !found {
+			fmt.Println("indefinito")
+			return
+		}
+	}
+
+	oldShape := daFilaaListaForme(g, sigma)
+	smassima := sottoStringaMassima(oldShape, listaForme)
+
+	fmt.Println((len(strings.Fields(oldShape)) - len(strings.Fields(smassima))) + (len(strings.Fields(listaForme)) - len(strings.Fields(smassima))))
+}

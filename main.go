@@ -21,7 +21,7 @@ func main() {
 			stampaMattoncino(g, operand)
 			fmt.Println()
 		case "d":
-			listaNomi := operand //per esempio "+ciao -cane -gatto +macchina"
+			listaNomi := operand
 			disponiFila(g, listaNomi)
 		case "S":
 			stampaFila(g, operand)
@@ -35,6 +35,9 @@ func main() {
 		case "f":
 			names := strings.Split(operand, " ")
 			disponiFilaMinima(g, names[0], names[1])
+		case "c":
+			name, shapes, _ := strings.Cut(operand, " ")
+			costo(g, name, shapes)
 		case "q":
 			return
 		}
