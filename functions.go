@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"fmt"
+
 	"strings"
 )
 
@@ -110,8 +111,8 @@ func sottoStringaMassima(sigma, tau string) string {
 }
 
 /*
-   Se non esiste alcun mattoncino di nome σ oppure se il mattoncino di nome σ non appartiene ad alcuna fila, non compie alcuna operazione.
-   Altrimenti stampa l’indice di cacofonia della fila cui appartiene il mattoncino di nome σ.
+Se non esiste alcun mattoncino di nome σ oppure se il mattoncino di nome σ non appartiene ad alcuna fila, non compie alcuna operazione.
+Altrimenti stampa l’indice di cacofonia della fila cui appartiene il mattoncino di nome σ.
 */
 func indiceCacofonia(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && (*m).fila != nil && *(*m).fila != nil {
@@ -136,18 +137,57 @@ Crea e posiziona sul tavolo da gioco una fila di lunghezza minima da α a β. Tu
 della fila devono essere presi dalla scatola. Se non è possibile creare alcuna fila da α a β, stampa il
 messaggio: non esiste fila da α a β
 */
+
 func disponiFilaMinima(g gioco, alpha, beta string) {
 	_, isInAlpha := g.forme[alpha]
 	_, isInBeta := g.forme[beta]
 	if !(isInAlpha && isInBeta) {
 		return
 	}
-	/*
-		if alpha == beta {
-			fmt.Println("here there is a bug")
-			return
+
+	if alpha == beta {
+		adjs := g.forme[alpha].Front()
+		pathLen := len(g.mattoncini)
+		var pathMin string
+
+		for ; adjs != nil; adjs = adjs.Next() {
+			m := adjs.Value.(*mattoncino)
+			var s string
+			l := len(g.mattoncini)
+			visitedArch := make(map[*mattoncino]bool)
+			visitedArch[m] = true
+			if (*m).alpha == alpha && ((*m).fila == nil || *((*m).fila) == nil) {
+				l, s = BFSCamminoMinimo(g, (*m).beta, beta, visitedArch)
+			} else if (*m).beta == alpha && ((*m).fila == nil || *((*m).fila) == nil) {
+				l, s = BFSCamminoMinimo(g, (*m).alpha, beta, visitedArch)
+			}
+			if l <= pathLen {
+				pathLen = l
+				pathMin = s
+				if (m.alpha == alpha && (*m).direzione) || (!(m.alpha == alpha) && !((*m).direzione)) {
+					pathMin = "+" + (*m).sigma + " " + pathMin
+				} else {
+					pathMin = "-" + (*m).sigma + " " + pathMin
+				}
+			}
 		}
-	*/
+		if pathLen != 0 {
+			disponiFila(g, pathMin)
+		} else {
+			fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
+		}
+	} else {
+		c, path := BFSCamminoMinimo(g, alpha, beta, make(map[*mattoncino]bool))
+		if c == 0 {
+			fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
+		} else {
+			disponiFila(g, path)
+		}
+	}
+
+}
+
+func BFSCamminoMinimo(g gioco, alpha, beta string, visitedArch map[*mattoncino]bool) (int, string) {
 	visited := make(map[string]string)
 	queue := list.New()
 	queue.PushBack(alpha)
@@ -155,51 +195,54 @@ func disponiFilaMinima(g gioco, alpha, beta string) {
 
 	for queue.Len() != 0 {
 		curr := queue.Remove(queue.Front()).(string)
+		if g.forme[curr] == nil {
+			fmt.Println(curr, g.forme[curr])
+			return 0, ""
+		}
 		adjs := g.forme[curr].Front()
 		for ; adjs != nil; adjs = adjs.Next() {
 			m := adjs.Value.(*mattoncino)
-			if m.alpha == curr && visited[m.beta] == "" && ((*m).fila == nil || *(*m).fila == nil) {
+			if m.alpha == curr && visited[m.beta] == "" && !visitedArch[m] && ((*m).fila == nil || *(*m).fila == nil) {
 				visited[m.beta] = m.sigma
 				queue.PushBack(m.beta)
 				if m.beta == beta {
 					break
 				}
-			} else if m.beta == curr && visited[m.alpha] == "" && ((*m).fila == nil || *(*m).fila == nil) {
+			} else if m.beta == curr && visited[m.alpha] == "" && !visitedArch[m] && ((*m).fila == nil || *(*m).fila == nil) {
 				visited[m.alpha] = m.sigma
 				queue.PushBack(m.alpha)
 				if m.alpha == beta {
 					break
 				}
 			}
+			visitedArch[m] = true
 		}
 	}
-
+	var c int
 	if visited[beta] != "" {
 		fila := ""
 		key := beta
 		for key != alpha {
+			c++
 			s := visited[key]
 			m := g.mattoncini[s]
 			if m.beta == key {
 				if (*m).direzione {
-					fila = " +" + s + fila
+					fila = "+" + s + " " + fila
 				} else {
-					fila = " -" + s + fila
+					fila = "-" + s + " " + fila
 				}
 				key = m.alpha
 			} else {
 				if (*m).direzione {
-					fila = " -" + s + fila
+					fila = " -" + s + " " + fila
 				} else {
-					fila = " +" + s + fila
-
+					fila = " +" + s + " " + fila
 				}
 				key = m.beta
 			}
 		}
-		
-		disponiFila(g, fila)
-	} else {
-		fmt.Printf("non esiste fila da %s a %s\n", alpha, beta)
+		return c, fila
 	}
+	return c, ""
 }
