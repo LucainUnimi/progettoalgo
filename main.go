@@ -31,7 +31,7 @@ func main() {
 			indiceCacofonia(g, operand)
 		case "M":
 			names := strings.Split(operand, " ")
-			fmt.Println(sottoStringaMassima(names[0], names[1]))
+			fmt.Println(string(sottoSeqMassima([]rune(names[0]), []rune(names[1]))))
 		case "f":
 			names := strings.Split(operand, " ")
 			disponiFilaMinima(g, names[0], names[1])

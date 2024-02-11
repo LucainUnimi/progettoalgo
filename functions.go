@@ -70,7 +70,7 @@ func disponiFila(g gioco, listaNomi string) {
 	}
 }
 
-func sottoStringaMassima(sigma, tau string) string {
+func sottoSeqMassima[T comparable](sigma, tau []T) []T {
 	n, m := len(sigma), len(tau)
 	// Creazione di una matrice per memorizzare i risultati dei sottoproblemi
 	dp := make([][]int, n+1)
@@ -93,10 +93,10 @@ func sottoStringaMassima(sigma, tau string) string {
 
 	// Ricostruzione della LCS a partire dalla matrice dp
 	lcsLength := dp[n][m]
-	lcs := make([]rune, lcsLength)
+	lcs := make([]T, lcsLength)
 	for i, j := n, m; i > 0 && j > 0; {
 		if sigma[i-1] == tau[j-1] {
-			lcs[lcsLength-1] = rune(sigma[i-1]) // Aggiunta del carattere comune
+			lcs[lcsLength-1] = sigma[i-1] // Aggiunta del carattere comune
 			i--
 			j--
 			lcsLength--
@@ -107,7 +107,7 @@ func sottoStringaMassima(sigma, tau string) string {
 		}
 	}
 
-	return string(lcs)
+	return lcs
 }
 
 /*
@@ -118,7 +118,9 @@ func indiceCacofonia(g gioco, sigma string) {
 	if m, isIn := g.mattoncini[sigma]; isIn && (*m).fila != nil && *(*m).fila != nil {
 		var c int
 		for f := (*m.fila).Front(); f.Next() != nil; f = f.Next() {
-			c += len(sottoStringaMassima(f.Value.(*mattoncino).sigma, f.Next().Value.(*mattoncino).sigma))
+			first := []rune(f.Value.(*mattoncino).sigma)
+			second := []rune(f.Next().Value.(*mattoncino).sigma)
+			c += len(sottoSeqMassima(first, second))
 		}
 		fmt.Printf("%d\n", c)
 	}
@@ -247,22 +249,6 @@ func BFSCamminoMinimo(g gioco, alpha, beta string, visitedArch map[*mattoncino]b
 	return c, ""
 }
 
-func nomeFila(g gioco, sigma string) string {
-	m, isIn := g.mattoncini[sigma]
-	if !isIn || (*m).fila == nil || *(*m).fila == nil {
-		return ""
-	}
-	var name string
-	for e := (*(*m).fila).Front(); e != nil; e = e.Next() {
-		if (*m).direzione {
-			name += "+" + (*m).sigma + " "
-		} else {
-			name += "-" + (*m).sigma + " "
-		}
-	}
-	return name
-}
-
 func daFilaaListaForme(g gioco, sigma string) string {
 	m, isIn := g.mattoncini[sigma]
 	if !isIn || (*m).fila == nil || *(*m).fila == nil {
@@ -270,31 +256,35 @@ func daFilaaListaForme(g gioco, sigma string) string {
 	}
 	var nome string
 	for e := (*(*m).fila).Front(); e != nil; e = e.Next() {
-		if (*m).direzione {
-			nome += " " + (*m).alpha
-		} else {
-			nome += " " + (*m).beta
+		nome += e.Value.(*mattoncino).alpha + " "
+		if e.Next() == nil {
+			nome += e.Value.(*mattoncino).beta
 		}
 	}
 	return nome
 }
 
 func costo(g gioco, sigma string, listaForme string) {
-	name := nomeFila(g, sigma)
-	if name == "" {
+	oldM, isIn := g.mattoncini[sigma]
+	if !isIn || (*oldM).fila == nil || *(*oldM).fila == nil {
 		return
 	}
 
+	fila := *(*oldM).fila
+
 	shapes := strings.Fields(listaForme)
-	var visited map[*mattoncino]bool
+	visited := make(map[*mattoncino]bool)
 	for i := 0; i < len(shapes)-1; i++ {
 		var found bool
 		bricks := g.forme[shapes[i]].Front()
 		for ; bricks != nil; bricks = bricks.Next() {
 			m := bricks.Value.(*mattoncino)
 			if (m.alpha == shapes[i+1] || m.beta == shapes[i+1]) && !visited[m] {
-				found = true
-				break
+				if (*m).fila == nil || *(*m).fila == nil || *(*m).fila == fila {
+					visited[m] = true
+					found = true
+					break
+				}
 			}
 		}
 		if !found {
@@ -303,8 +293,8 @@ func costo(g gioco, sigma string, listaForme string) {
 		}
 	}
 
-	oldShape := daFilaaListaForme(g, sigma)
-	smassima := sottoStringaMassima(oldShape, listaForme)
+	oldShape := strings.Split(daFilaaListaForme(g, sigma), " ")
+	smassima := sottoSeqMassima(oldShape, strings.Split(listaForme, " "))
 
-	fmt.Println((len(strings.Fields(oldShape)) - len(strings.Fields(smassima))) + (len(strings.Fields(listaForme)) - len(strings.Fields(smassima))))
+	fmt.Println((len(oldShape) - len(smassima)) + (len(strings.Split(listaForme, " ")) - len(smassima)))
 }

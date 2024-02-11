@@ -1,1 +1,6 @@
+(
+uno: a, b
+due: b, c
+tre: c, d
+)
 3
