@@ -1,0 +1,30 @@
+marco: cane, gatto
+giorgio: pesce, cane
+lisa: zebra, cammello
+anna: cammello, gatto
+giuseppe: zebra, squalo
+linda: cane, pesce
+romeo: squalo, toro
+(
+marco: cane, gatto
+anna: gatto, cammello
+lisa: cammello, zebra
+giuseppe: zebra, squalo
+)
+(
+romeo: toro, squalo
+giuseppe: squalo, zebra
+lisa: zebra, cammello
+anna: cammello, gatto
+)
+4
+
+atto
+ono
+(
+giorgio: pesce, cane
+marco: cane, gatto
+anna: gatto, cammello
+lisa: cammello, zebra
+)
+3

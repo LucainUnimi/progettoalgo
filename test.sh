@@ -1,5 +1,5 @@
 go build -o build/
-for i in {1..10}
+for i in {1..11}
 do
 echo "TEST: "  $i
 build/progetto < tests/"input-"$i".txt" > "output.txt"

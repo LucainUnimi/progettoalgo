@@ -1,0 +1,31 @@
+m cane gatto marco
+m pesce cane giorgio
+m zebra cammello lisa
+m cammello gatto anna
+m zebra squalo giuseppe
+m cane pesce linda
+m squalo toro romeo
+s marco
+s giorgio
+s lisa
+s anna
+s giuseppe
+s linda
+s romeo
+d +marco -anna -lisa +giuseppe
+S lisa
+d -linda +marco
+S linda
+e giuseppe
+d -romeo -giuseppe +lisa +anna
+S romeo
+i giuseppe
+M cicala serpente
+M gatto matto
+M tonno moscardino
+e lisa
+f pesce zebra
+S anna
+m gatto zebra maria
+c marco pesce cane gatto zebra
+q

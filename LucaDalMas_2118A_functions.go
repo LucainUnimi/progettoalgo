@@ -249,30 +249,37 @@ func BFSCamminoMinimo(g gioco, alpha, beta string, visitedArch map[*mattoncino]b
 	return c, ""
 }
 
-func daFilaaListaForme(g gioco, sigma string) string {
-	m, isIn := g.mattoncini[sigma]
-	if !isIn || (*m).fila == nil || *(*m).fila == nil {
+func nomeFila(g gioco, sigma string) string {
+	oldM, isIn := g.mattoncini[sigma]
+	if !isIn || (*oldM).fila == nil || *(*oldM).fila == nil {
 		return ""
 	}
 	var nome string
-	for e := (*(*m).fila).Front(); e != nil; e = e.Next() {
-		nome += e.Value.(*mattoncino).alpha + " "
-		if e.Next() == nil {
-			nome += e.Value.(*mattoncino).beta
-		}
+	for e := (*(*oldM).fila).Front(); e != nil; e = e.Next() {
+		nome += e.Value.(*mattoncino).sigma + " "
 	}
-	return nome
+	return strings.TrimSpace(nome)
 }
 
 func costo(g gioco, sigma string, listaForme string) {
-	oldM, isIn := g.mattoncini[sigma]
-	if !isIn || (*oldM).fila == nil || *(*oldM).fila == nil {
+
+	oldNome := nomeFila(g, sigma)
+
+	if oldNome == "" {
 		return
 	}
 
-	fila := *(*oldM).fila
+	fila := *(g.mattoncini[sigma].fila)
+
+	r := make(map[string]int)
+	var c int
+	for e := fila.Front(); e != nil; e = e.Next() {
+		r[e.Value.(*mattoncino).sigma] = c
+		c++
+	}
 
 	shapes := strings.Fields(listaForme)
+	possBricks := make([][]string, len(shapes)-1)
 	visited := make(map[*mattoncino]bool)
 	for i := 0; i < len(shapes)-1; i++ {
 		var found bool
@@ -281,9 +288,11 @@ func costo(g gioco, sigma string, listaForme string) {
 			m := bricks.Value.(*mattoncino)
 			if (m.alpha == shapes[i+1] || m.beta == shapes[i+1]) && !visited[m] {
 				if (*m).fila == nil || *(*m).fila == nil || *(*m).fila == fila {
-					visited[m] = true
+					if (*m).fila == nil || *(*m).fila == nil {
+						visited[m] = true
+					}
+					possBricks[i] = append(possBricks[i], (*m).sigma)
 					found = true
-					break
 				}
 			}
 		}
@@ -293,8 +302,39 @@ func costo(g gioco, sigma string, listaForme string) {
 		}
 	}
 
-	oldShape := strings.Split(daFilaaListaForme(g, sigma), " ")
-	smassima := sottoSeqMassima(oldShape, strings.Split(listaForme, " "))
+	var nuovafila []string
+	used := make(map[string]bool)
+	for i := range possBricks {
+		var c int = fila.Len()
+		var b string
+		for _, brick := range possBricks[i] {
+			if i, ok := r[brick]; ok && i < c {
+				c = i
+				b = brick
+			}
+		}
+		if c != fila.Len() {
+			nuovafila = append(nuovafila, b)
+			used[b] = true
+			delete(r, b)
+		} else {
+			var found bool
+			for j := range possBricks[i] {
+				if !used[possBricks[i][j]] {
+					nuovafila = append(nuovafila, possBricks[i][j])
+					used[possBricks[i][j]] = true
+					found = true
+					break
+				}
+			}
+			if !found {
+				fmt.Println("indefinito")
+				return
+			}
+		}
+	}
 
-	fmt.Println((len(oldShape) - len(smassima)) + (len(strings.Split(listaForme, " ")) - len(smassima)))
+	smassima := sottoSeqMassima(strings.Fields(oldNome), nuovafila)
+
+	fmt.Println((len(strings.Fields(oldNome)) - len(smassima)) + (len(nuovafila) - len(smassima)))
 }
