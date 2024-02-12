@@ -1,31 +1,31 @@
 m cane gatto marco
-m pesce cane giorgio
-m zebra cammello lisa
-m cammello gatto anna
+m lince cane giorgio
+m zebra cammello leone
+m cammello gatto cerchio
 m zebra squalo giuseppe
-m cane pesce linda
+m cane lince linda
 m squalo toro romeo
 s marco
 s giorgio
-s lisa
-s anna
+s leone
+s cerchio
 s giuseppe
 s linda
 s romeo
-d +marco -anna -lisa +giuseppe
-S lisa
+d +marco -cerchio -leone +giuseppe
+S leone
 d -linda +marco
 S linda
 e giuseppe
-d -romeo -giuseppe +lisa +anna
+d -romeo -giuseppe +leone +cerchio
 S romeo
 i giuseppe
 M cicala serpente
 M gatto matto
 M tonno moscardino
-e lisa
-f pesce zebra
-S anna
+e leone
+f lince zebra
+S cerchio
 m gatto zebra maria
-c marco pesce cane gatto zebra
+c marco lince cane gatto zebra
 q

@@ -1,30 +1,30 @@
 marco: cane, gatto
-giorgio: pesce, cane
-lisa: zebra, cammello
-anna: cammello, gatto
+giorgio: lince, cane
+leone: zebra, cammello
+cerchio: cammello, gatto
 giuseppe: zebra, squalo
-linda: cane, pesce
+linda: cane, lince
 romeo: squalo, toro
 (
 marco: cane, gatto
-anna: gatto, cammello
-lisa: cammello, zebra
+cerchio: gatto, cammello
+leone: cammello, zebra
 giuseppe: zebra, squalo
 )
 (
 romeo: toro, squalo
 giuseppe: squalo, zebra
-lisa: zebra, cammello
-anna: cammello, gatto
+leone: zebra, cammello
+cerchio: cammello, gatto
 )
-4
+5
 
 atto
 ono
 (
-giorgio: pesce, cane
+giorgio: lince, cane
 marco: cane, gatto
-anna: gatto, cammello
-lisa: cammello, zebra
+cerchio: gatto, cammello
+leone: cammello, zebra
 )
 3

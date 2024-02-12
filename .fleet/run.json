@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "go",
+            "name": "Go configuration",
+            "goExecPath": "/opt/homebrew/opt/go@1.21/libexec/bin/go",
+            "buildParams": [],
+        },
+    ]
+}
